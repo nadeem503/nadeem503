@@ -1,10 +1,13 @@
-- 👋 Hi, I’m @nadeem503
-- 👀 I’m interested in ...
-- 🌱 I’m currently learning ...
-- 💞️ I’m looking to collaborate on ...
-- 📫 How to reach me ...
+#!/bin/bash
 
-<!---
-nadeem503/nadeem503 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-You can click the Preview link to take a look at your changes.
---->
+for list in ${MAPPING[@]}
+do
+	HOST_IP=`echo "$list" | cut -f 1 -d','`
+    echo "--------------------- $HOST_IP ------------------------"
+
+    sshpass -p "$SERVER_PASSWORD" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no $SERVER_USER@"$HOST_IP" "/usr/bin/go-adb listdevices | jq -r '.devicelist[].SerialNumber' | wc -l"
+
+    sshpass -p "$SERVER_PASSWORD" ssh -o StrictHostKeyChecking=no $SERVER_USER@"$HOST_IP" "./Documents/devops_scripts/resetusb.sh"
+
+    sshpass -p "$SERVER_PASSWORD" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no $SERVER_USER@"$HOST_IP" "/usr/bin/go-adb listdevices | jq -r '.devicelist[].SerialNumber' | wc -l"
+
